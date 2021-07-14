@@ -1,0 +1,70 @@
+#include<stdlib.h>
+#include<set>
+#include<iostream>
+#include<vector>
+#include<list>
+#include<limits.h>
+using namespace std;
+    struct myHeapcmp{
+     bool operator()(const pair<int,int> &a,const pair<int,int>&b){
+      return a.second<b.second;
+     }
+
+    };
+
+typedef list<pair<int,int> > AdjList;
+typedef vector<AdjList> Graph;
+typedef multiset<pair<int,int>,myHeapcmp>MinHeap;
+vector<int> dijkstra(Graph g,int N,int s){
+    vector<int>d(N,100);
+    vector<int>  predecessor(N);
+    d[s] =0;
+    vector<int>p(N,-1);
+    vector<MinHeap::iterator>HeapPos(N);
+    MinHeap h;
+    for(int i=0;i<N;i++)
+     HeapPos[i] = h.insert(make_pair(i,d[i]));
+     MinHeap::iterator it;
+    while(h.size()>0){
+     it = h.begin();
+     int v = it->first;
+
+     h.erase(it);
+     AdjList::iterator it2;
+     for(it2=g[v].begin();it2!=g[v].end();it2++){
+       int u = it2->first;
+       int w_uv= it2->second;
+       if(d[u]>w_uv+d[v]){
+         d[u]= w_uv+d[v];
+         predecessor[u] = v;
+         p[u]=v; h.erase(HeapPos[u]);
+         HeapPos[u]= h.insert(make_pair(u,d[u]));
+       }
+
+     }
+    }
+    for(int i = 0;i<N;i++){
+        int node = i;
+        int pre = predecessor[i];
+        cout<<i<<" :";
+        while(pre!=s){
+            cout<<pre<<" ";
+            node = pre;
+            pre = predecessor[node];
+        }
+        cout<<s<<endl;
+    }
+
+ return d;
+}
+4 4 5
+1 2 3
+1 3 2
+2 4 2
+3 4 3
+0
+1 4
+2 2 3
+0
+
+output = 5
